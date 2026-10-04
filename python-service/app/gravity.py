@@ -12,9 +12,9 @@ def particle_dimension(p: CelestialBody) -> None:
     print('%gkg\n%gm'  % (p.mass, p.radius))
 
 # The function gravitational_force calculates the gravitational force between two particles based on their masses and the distance between them using Newton's law of universal gravitation.
-def gravitational_force(p1: CelestialBody, p2: CelestialBody, R: float) -> float:
+def gravitational_force(p1: float, p2: float, R: float) -> float:
     validate_positive(R, "distance")
-    gravity_force=(G*p1.mass*p2.mass)/R**2
+    gravity_force=(G*p1*p2)/R**2
     return gravity_force
     
 # The function gravity_intensity calculates the gravitational intensity at a point due to a particle.
@@ -31,9 +31,9 @@ def escape_velocity(p: CelestialBody) -> float:
     U_e=math.sqrt(2* acc_due_gravity(p)*p.radius)
     return U_e
 # The function potential_energy calculates the gravitational potential energy between two particles based on their masses and the distance between them.
-def potential_energy(p1: CelestialBody, p2: CelestialBody, R: float) -> float:
+def potential_energy(p1: float, p2: float, R: float) -> float:
     validate_positive(R, "distance")
-    P=-(G*p1.mass*p2.mass/R)
+    P=-(G*p1*p2/R)
     return P
 def validate_positive(value: float, name: str, allow_zero: bool = False) -> None:
     if not allow_zero and value <= 0:
@@ -62,8 +62,8 @@ def density_4_planet(p: CelestialBody) -> float:
     return density
 
 # The function angular_velocity calculates the angular velocity of a particle based on its acceleration due to gravity and radius.
-def angular_velocity(p: CelestialBody, R: float) -> float:
+def angular_velocity(p: float, R: float) -> float:
     validate_positive(R, "distance")
-    w = math.sqrt((G * p.mass) / (R ** 3))
+    w = math.sqrt((G * p) / (R ** 3))
     return w
 

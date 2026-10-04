@@ -1,44 +1,58 @@
+from fastapi import FastAPI  # type: ignore[reportMissingImports]
+from app.gravity import gravitational_force, acc_due_gravity, escape_velocity, gravity_intensity, density_4_planet, potential_energy, potential_difference, potential_gradient, angular_velocity
+from app.schemas import ForceRequest, ForceResponse, BodyRequest, AccelerationResponse, EscapeVelocityResponse, GravityIntensityResponse, DensityResponse, PotentialEnergyResponse, PotentialDifferenceRequest, PotentialDifferenceResponse, PotentialGradientRequest, PotentialGradientResponse,AngularVelocityRequest,AngularVelocityResponse
 from app.models import CelestialBody
-from app.gravity import  *
 
-def main():
-    earth = CelestialBody(mass=5.972e24, radius=6.371e6)  # Mass in kg, radius in meters
-    moon = CelestialBody(mass=7.348e22, radius=1.737e6)   # Mass in kg, radius in meters
+app = FastAPI()
 
-    distance =  384_400_000 # Distance between the centers of the two bodies
+@app.post("/gravity/force", response_model=ForceResponse)
+def calculate_gravitational_force(request: ForceRequest) -> ForceResponse:
+    force= gravitational_force(request.mass1, request.mass2, request.distance)
+    return ForceResponse(force=force)
 
-    force = gravitational_force(earth, moon, distance)
-    print(f"Gravitational Force between Earth and Moon: {force} N")
+@app.post("/gravity/acceleration", response_model=AccelerationResponse)
+def calculate_acceleration(request: BodyRequest) -> AccelerationResponse:
+    body = CelestialBody(mass=request.mass, radius=request.radius)
+    acceleration = acc_due_gravity(body)
+    return AccelerationResponse(acceleration=acceleration)
 
-    earth_gravity = acc_due_gravity(earth)
-    print(f"Acceleration due to gravity on Earth: {earth_gravity} m/s^2")
-    print()
-    print(f"Gravitational Intensity on Earth: {gravity_intensity(earth)} N/kg")
-    print()
-    moon_gravity = acc_due_gravity(moon)
-    print(f"Acceleration due to gravity on Moon: {moon_gravity} m/s^2")
-    print()
-    print(f"Gravitational Intensity on Moon: {gravity_intensity(moon)} N/kg")
-    print()
-    print(f"Escape velocity from Earth: {escape_velocity(earth)} m/s")
-    print()
-    print(f"Escape velocity from Moon: {escape_velocity(moon)} m/s")
-    print()
-    print(f"Gravitational Potential Energy between Earth and Moon: {potential_energy(earth, moon, distance)} J")
-    print()
-    height=1000 # height above the surface of the planet in meters
-    print(f" Potential difference between the surface and {height} m above: {round(potential_difference(earth,height),2)} J/kg")
-    print()
-    print(f"Gravitational potential gradient at {height} m above the surface: {round(potential_gradient(moon,height),2)} N/kg")
-    print()
-    print(f"Gravitational potential gradient at {height} m above the surface: {round(potential_gradient(earth,height),2)} N/kg")
-    print()
-    print(f"Density of Earth: {density_4_planet(earth)} kg/m^3")
-    print()
-    print(f"Density of Moon: {density_4_planet(moon)} kg/m^3" )
-    print()
-    print(f"Angular velocity of Earth: {angular_velocity(earth,earth.radius)} rad/s")
-    print()
-    print(f"Angular velocity of Moon: {angular_velocity(moon,moon.radius)} rad/s")
-if __name__ == "__main__":
-    main()
+@app.post("/gravity/escape-velocity", response_model=EscapeVelocityResponse)
+def calculate_escape_velocity(request: BodyRequest) -> EscapeVelocityResponse:
+    body= CelestialBody(mass=request.mass, radius=request.radius)
+    escape_velocity_value = escape_velocity(body)
+    return EscapeVelocityResponse(escape_velocity=escape_velocity_value)
+
+@app.post("/gravity/gravity-intensity", response_model=GravityIntensityResponse)
+def calculate_gravity_intensity(request: BodyRequest) -> GravityIntensityResponse:
+    body = CelestialBody(mass=request.mass, radius=request.radius)
+    gravity_intensity_value = gravity_intensity(body)
+    return GravityIntensityResponse(gravity_intensity=gravity_intensity_value)
+
+@app.post("/gravity/density", response_model=DensityResponse)
+def calculate_density(request: BodyRequest) -> DensityResponse:
+    body = CelestialBody(mass=request.mass, radius=request.radius)
+    density_value = density_4_planet(body)
+    return DensityResponse(density=density_value)
+
+@app.post("/gravity/potential-energy", response_model=PotentialEnergyResponse)
+def calculate_potential_energy(request: ForceRequest) -> PotentialEnergyResponse:
+    potential_energy_value = potential_energy(request.mass1, request.mass2, request.distance)
+    return PotentialEnergyResponse(potential_energy=potential_energy_value)
+
+@app.post("/gravity/potential-difference", response_model=PotentialDifferenceResponse)
+def calculate_potential_difference(request: PotentialDifferenceRequest) -> PotentialDifferenceResponse:
+    body = CelestialBody(mass=request.mass, radius=request.radius)
+    potential_difference_value = potential_difference(body, request.height)
+    return PotentialDifferenceResponse(potential_difference=potential_difference_value)
+
+@app.post("/gravity/potential-gradient", response_model=PotentialGradientResponse)
+def calculate_potential_gradient(request: PotentialGradientRequest) -> PotentialGradientResponse:
+    body = CelestialBody(mass=request.mass, radius=request.radius)
+    potential_gradient_value = potential_gradient(body, request.height)
+    return PotentialGradientResponse(potential_gradient=potential_gradient_value)
+
+@app.post("/gravity/angular-velocity", response_model=AngularVelocityResponse)
+def calculate_angular_velocity(request: AngularVelocityRequest) -> AngularVelocityResponse:
+    body = CelestialBody(mass=request.mass, radius=request.orbital_radius)
+    angular_velocity_value = angular_velocity(body.mass, body.radius)
+    return AngularVelocityResponse(angular_velocity=angular_velocity_value)
