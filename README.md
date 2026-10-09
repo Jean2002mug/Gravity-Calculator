@@ -97,10 +97,10 @@ Navigate to the Python service:
 cd python-service
 
 Install the required packages:
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
 
 Start the FastAPI development server:
-uvicorn app.main:app --reload
+python -m uvicorn app.main:app --reload
 
 The API will run at:
 http://127.0.0.1:8000
