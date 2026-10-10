@@ -1,7 +1,8 @@
 //import the Router class from the express module and the callPythonGravityService function from the pythonGravityService.js file
 import { Router } from "express";
 import { callPythonGravityService } from "../services/pythonGravityService.js";
-
+import { saveCalculation } from "../services/calculationHistoryService.js";
+ // The file gravityRouter
 const router = Router();
 
 // Define request interfaces for type safety
@@ -50,6 +51,13 @@ router.post("/force", async (req, res) => {
                 distance
             }
         );
+        if (result.status >= 200 && result.status < 300) {
+            await saveCalculation(
+                "gravitational_force",
+                { mass1, mass2, distance },
+                result.data
+            );
+        }
 
         res.status(result.status).json(result.data);
 
@@ -84,6 +92,13 @@ router.post("/acceleration", async (req, res) => {
                 radius
             }
         );
+        if (result.status >= 200 && result.status < 300) {
+            await saveCalculation(
+                "acceleration_due_to_gravity",
+                { mass, radius },
+                result.data
+            );
+        }
 
         res.status(result.status).json(result.data);
 
@@ -119,6 +134,14 @@ router.post("/escape-velocity", async (req, res) => {
             }
         );
 
+        if (result.status >= 200 && result.status < 300) {
+            await saveCalculation(
+                "escape_velocity",
+                { mass, radius },
+                result.data
+            );
+        }
+
         res.status(result.status).json(result.data);
 
     } catch (error) {
@@ -153,6 +176,14 @@ router.post("/intensity", async (req, res) => {
             }
         );
 
+        if (result.status >= 200 && result.status < 300) {
+            await saveCalculation(
+                "gravitational_field_intensity",
+                { mass, radius },
+                result.data
+            );
+        }
+
         res.status(result.status).json(result.data);
 
     } catch (error) {
@@ -186,6 +217,15 @@ router.post("/density", async (req, res) => {
                 radius
             }
         );
+
+         if (result.status >= 200 && result.status < 300) {
+            await saveCalculation(
+                "density",
+                { mass, radius },
+                result.data
+            );
+        }
+
 
         res.status(result.status).json(result.data);
 
@@ -223,6 +263,15 @@ router.post("/potential-energy", async (req, res) => {
             }
         );
 
+         if (result.status >= 200 && result.status < 300) {
+            await saveCalculation(
+                "potential_energy",
+                { mass1,mass2,distance },
+                result.data
+            );
+        }
+
+
         res.status(result.status).json(result.data);
 
     } catch (error) {
@@ -258,6 +307,14 @@ router.post("/potential-difference", async (req, res) => {
                 height
             }
         );
+         if (result.status >= 200 && result.status < 300) {
+            await saveCalculation(
+                "potential_difference",
+                { mass, radius, height },
+                result.data
+            );
+        }
+
 
         res.status(result.status).json(result.data);
 
@@ -295,6 +352,15 @@ router.post("/potential-gradient", async (req, res) => {
             }
         );
 
+         if (result.status >= 200 && result.status < 300) {
+            await saveCalculation(
+                "potential_gradient",
+                { mass, radius, height },
+                result.data
+            );
+        }
+
+
         res.status(result.status).json(result.data);
 
     } catch (error) {
@@ -328,6 +394,14 @@ router.post("/angular-velocity", async (req, res) => {
                 orbital_radius
             }
         );
+
+         if (result.status >= 200 && result.status < 300) {
+            await saveCalculation(
+                "angular_velocity",
+                { mass, orbital_radius},
+                result.data
+            );
+        }
 
         res.status(result.status).json(result.data);
 
