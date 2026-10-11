@@ -11,15 +11,31 @@ import cors from "cors";
 const app = express();
 
 // set the port from environment variable or default to 3000
-const PORT = process.env.PORT || 3000;
+// Render provides PORT automatically in production.
+// Port 3000 remains our local default.
+const PORT = Number(process.env.PORT) || 3000;
+// Read the allowed frontend URLs from the environment.
+//
+// Locally this becomes:
+// http://localhost:5173
+//
+// In production we can provide:
+// https://gravitykalkilateri2023.com
+const allowedOrigins = (
+    process.env.FRONTEND_URL ||
+    "http://localhost:5173"
+)
+    .split(",")
+    .map((origin) => origin.trim());
 
-//CORS support for Express backend
-app.use(cors({
-    origin: "http://localhost:5173"
-}));
+// Allow requests only from our approved frontend addresses.
+app.use(
+    cors({
+        origin: allowedOrigins
+    })
+);
 
 app.use(express.json());
-
 
 //express app uses JSON middleware to parse incoming requests with JSON payloads
 app.use(express.json());
@@ -61,8 +77,10 @@ app.get("/api/health/db", async (_req, res) => {
 });
 
 
-//express app listens on the specified port and logs a message when the server is running
-
-app.listen(PORT, () => {
+/// Listen on all network interfaces.
+//
+// 0.0.0.0 is required when the application runs
+// inside many cloud hosting environments.
+app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server is running on port ${PORT}`);
 });

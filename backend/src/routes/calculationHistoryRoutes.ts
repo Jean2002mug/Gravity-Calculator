@@ -5,6 +5,7 @@ const router= Router();
 
 router.get("/history", async (_req, res) => {
     try {
+        // currently shared until user accounts are implemented.
         const result = await pool.query(
             `SELECT
                 id,
@@ -12,8 +13,9 @@ router.get("/history", async (_req, res) => {
                 input_data,
                 result_data,
                 created_at
-             FROM calculation_history
-             ORDER BY created_at DESC`
+            FROM calculation_history
+            ORDER BY created_at DESC
+            LIMIT 50`
         );
 
         res.json(result.rows);

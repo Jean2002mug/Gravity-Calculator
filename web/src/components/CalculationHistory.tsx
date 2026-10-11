@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 
 // Format very large and very small numbers cleanly.
 import ScientificNumber from "./ScientificNumber";
-
+// Base URL for the Node.js backend.
+import { API_URL } from "../config/api";
 // Define one calculation stored in PostgreSQL
 interface CalculationHistoryItem {
     // Store the calculation ID.
@@ -47,7 +48,7 @@ function CalculationHistory({ refreshKey }: CalculationHistoryProps) {
                 // Send a request to the backend.
                 const response = await fetch(
                     // Use the calculation history endpoint.
-                    "http://localhost:3000/api/calculations/history"
+                    `${API_URL}/api/calculations/history`
                 // Finish this expression.
                 );
 
