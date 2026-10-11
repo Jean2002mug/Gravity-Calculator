@@ -3,6 +3,7 @@ import gravityRouter from "./routes/gravityRoutes.js";//import gravityRouter fro
 import pool from "./databases/db.js";//import pool from "./databases/db.js";
 import celestialBodyRouter from "./routes/celestialBodyRoutes.js";
 import calculationHistoryRouter from "./routes/calculationHistoryRoutes.js";
+import cors from "cors";
 //initialize express app
 //express function is called to create an instance of an Express application
 // which is assigned to the variable app. This app variable will be used to define routes
@@ -12,6 +13,14 @@ const app = express();
 // set the port from environment variable or default to 3000
 const PORT = process.env.PORT || 3000;
 
+//CORS support for Express backend
+app.use(cors({
+    origin: "http://localhost:5173"
+}));
+
+app.use(express.json());
+
+
 //express app uses JSON middleware to parse incoming requests with JSON payloads
 app.use(express.json());
 //express app gets the root route and sends a welcome message as JSON response
@@ -20,6 +29,8 @@ app.get("/", (_req, res) => {
         message: "Welcome to the Gravity Calculator API!"
     });
 });
+
+
 //express app uses the gravityRouter for all routes starting with /api/gravity
 app.use("/api/gravity", gravityRouter);
 //express app uses the celestialBodyRouter for all routes starting with /api/celestial-bodies
