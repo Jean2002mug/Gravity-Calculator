@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 // Format very large and very small numbers cleanly.
 import ScientificNumber from "./ScientificNumber";
 // Base URL for the Node.js backend.
-import { API_URL } from "../config/api";
 import { apiFetch } from "../utils/apiFetch";
 // Define one calculation stored in PostgreSQL
 interface CalculationHistoryItem {
