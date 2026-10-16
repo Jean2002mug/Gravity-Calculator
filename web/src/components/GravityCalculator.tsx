@@ -1,11 +1,13 @@
 // Load the React hooks.
 import { useEffect, useState } from "react";
+
 // Load the available calculation settings.
 import { calculations } from "../config/calculations";
-import ScientificNumber from './ScientificNumber';
-// Base URL for the Node.js backend.
-import { API_URL } from "../config/api";
-//Fetch from Node with automatic retry support
+
+// Format calculation results.
+import ScientificNumber from "./ScientificNumber";
+
+// Fetch from Node with automatic retry support.
 import { apiFetch } from "../utils/apiFetch";
 
 // Define the shape of this data.
