@@ -1,10 +1,16 @@
 # Gravity Calculator
 
-Gravity Calculator is a full stack gravity and orbital physics project built with Python, TypeScript, Node.js, FastAPI, and PostgreSQL.
+Gravity Calculator is a full stack gravity and orbital physics application built with Python, TypeScript, Node.js, React, FastAPI, and PostgreSQL.
 
-The project originally started in 2023 as a Python program for calculating gravitational quantities between celestial bodies. It is now being expanded into a web and mobile application with a modular backend architecture.
+The project originally started in 2023 as a Python program for calculating gravitational quantities between celestial bodies. It has since grown into a deployed full stack web application with a modular architecture separating scientific calculations, application logic, persistent data, and the user interface.
 
-Python is responsible for the scientific and physics calculations, while the Node.js and TypeScript backend acts as the main application API. PostgreSQL stores celestial body data and calculation history.
+The production application is available at:
+
+**https://gravitykalkilateri2023.com**
+
+Python is responsible for the scientific calculations. Node.js and TypeScript provide the main application API. PostgreSQL stores celestial body information and calculation history. React and TypeScript provide the web interface.
+
+---
 
 ## Current Features
 
@@ -20,16 +26,79 @@ The application currently supports nine physics calculations:
 8. Gravitational potential gradient
 9. Orbital angular velocity
 
-The backend also supports:
+Additional application features include:
 
-* Storing celestial bodies in PostgreSQL
-* Retrieving all celestial bodies
-* Retrieving a celestial body by ID
-* Creating custom celestial bodies
-* Automatically storing successful calculations
-* Retrieving calculation history
-* Input validation
-* Communication between Node.js and the Python physics service
+* Celestial body selection
+* Automatic mass and radius population
+* Scientific number formatting
+* Dynamic celestial body backgrounds
+* Calculation history
+* Planet biography page
+* PostgreSQL calculation storage
+* Production API communication
+* Automatic retry handling for temporarily unavailable cloud services
+* Responsive web interface
+* Client side navigation with React Router
+* Custom production domain
+* Input validation in both the API and physics layer
+
+---
+
+## Celestial Bodies
+
+The application currently includes:
+
+* Mercury
+* Venus
+* Earth
+* Moon
+* Mars
+* Jupiter
+* Saturn
+* Uranus
+* Neptune
+
+Selecting a celestial body automatically populates relevant physical values such as mass and radius.
+
+The selected celestial body can also change the background image of the application.
+
+Earth is used as the default visual background when no celestial body has been selected.
+
+---
+
+## Planet Biography
+
+The Planet Biography section provides information about the major planets of the Solar System.
+
+Users can select a planet and view information such as:
+
+* Planet type
+* Mass
+* Radius
+* Surface gravity
+* Orbital period
+* General description
+* Key facts
+
+The page also changes its background to match the selected planet.
+
+---
+
+## Calculation History
+
+Successful calculations are automatically stored in PostgreSQL.
+
+The History page displays recent calculations including:
+
+* Calculation type
+* Input values
+* Result
+* Unit
+* Date and time
+
+Large and very small values are formatted using scientific notation for readability.
+
+---
 
 ## Technologies
 
@@ -37,33 +106,82 @@ The backend also supports:
 | --- | --- |
 | Python | Physics and scientific calculations |
 | FastAPI | Python REST API |
-| Pydantic | Python request and response validation |
+| Pydantic | Request and response validation |
 | Dataclasses | Celestial body data model |
-| Uvicorn | Python development server |
-| TypeScript | Main backend development |
+| Uvicorn | Python API server |
+| TypeScript | Backend and frontend development |
 | Node.js | Main application backend |
 | Express | Node.js REST API |
+| React | Web application interface |
+| React Router | Client side navigation |
 | PostgreSQL | Persistent application data |
 | `pg` | PostgreSQL connection from Node.js |
 | dotenv | Environment variable management |
+| Vite | React development and production build |
+| Render | Production hosting |
+| pgAdmin | PostgreSQL database administration |
 
-## Project Architecture
+---
+
+## Production Architecture
 
 ```text
-                     Web Application
-                    React / TypeScript
-                           |
-                           v
-                  Node.js / TypeScript
-                     Express API
-                    /           \
-                   /             \
-                  v               v
-           PostgreSQL        Python FastAPI
-              Database       Physics Service
+gravitykalkilateri2023.com
+            |
+            v
+    React + TypeScript
+       Web Application
+            |
+            v
+    Node.js + Express
+      TypeScript API
+       /          \
+      /            \
+     v              v
+PostgreSQL      Python FastAPI
+ Database       Physics Service
+                    |
+                    v
+              Physics Engine
 ```
 
-A React Native mobile application is also planned and will communicate with the same Node.js backend.
+The frontend, Node.js API, Python FastAPI service, and PostgreSQL database are deployed separately.
+
+---
+
+## Application Data Flow
+
+A typical calculation follows this flow:
+
+```text
+User enters or selects values
+            |
+            v
+React Web Application
+            |
+            v
+Node.js / TypeScript API
+            |
+            v
+Python FastAPI
+            |
+            v
+Physics Calculation
+            |
+            v
+Node.js
+       /           \
+      v             v
+Return result    PostgreSQL
+to React         history storage
+      |
+      v
+Display result
+```
+
+The Python service remains the source of truth for physics calculations.
+
+---
 
 ## Project Structure
 
@@ -73,8 +191,9 @@ Gravity-Calculator/
 ├── backend/
 │   │
 │   ├── src/
-│   │   ├── database/
-│   │   │   └── db.ts
+│   │   ├── databases/
+│   │   │   ├── db.ts
+│   │   │   └── schema.sql
 │   │   │
 │   │   ├── routes/
 │   │   │   ├── gravityRoutes.ts
@@ -102,30 +221,68 @@ Gravity-Calculator/
 │   │
 │   └── requirements.txt
 │
-├── mobile/
 ├── web/
+│   │
+│   ├── public/
+│   │   └── backgrounds/
+│   │
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── GravityCalculator.tsx
+│   │   │   ├── CalculationHistory.tsx
+│   │   │   ├── NavigationMenu.tsx
+│   │   │   └── ScientificNumber.tsx
+│   │   │
+│   │   ├── config/
+│   │   │   ├── api.ts
+│   │   │   ├── calculations.ts
+│   │   │   └── celestialBackgrounds.ts
+│   │   │
+│   │   ├── data/
+│   │   │   └── planetBiographies.ts
+│   │   │
+│   │   ├── pages/
+│   │   │   ├── HomePage.tsx
+│   │   │   ├── HistoryPage.tsx
+│   │   │   └── PlanetBiographyPage.tsx
+│   │   │
+│   │   ├── utils/
+│   │   │   └── apiFetch.ts
+│   │   │
+│   │   ├── App.tsx
+│   │   └── main.tsx
+│   │
+│   ├── .env.example
+│   └── package.json
 │
+├── mobile/
 ├── .gitignore
 └── README.md
 ```
+
+---
 
 ## Python Physics Service
 
 ### `models.py`
 
-Contains the `CelestialBody` dataclass and validation for properties such as mass and radius.
+Contains the `CelestialBody` dataclass and validation for celestial body properties such as mass and radius.
 
 ### `gravity.py`
 
-Contains the physics calculation functions and calculation level validation.
+Contains the gravitational and orbital physics functions.
+
+The calculations are kept separate from the web API so they can be reused independently.
 
 ### `schemas.py`
 
-Contains the Pydantic request and response models used by FastAPI.
+Contains Pydantic request and response models used by FastAPI.
 
 ### `main.py`
 
 Contains the FastAPI application and physics API endpoints.
+
+---
 
 ## Python API Endpoints
 
@@ -141,9 +298,16 @@ Contains the FastAPI application and physics API endpoints.
 | POST | `/gravity/potential-gradient` | Gravitational potential gradient |
 | POST | `/gravity/angular-velocity` | Orbital angular velocity |
 
+---
+
 ## Node.js API
 
-The Node.js and TypeScript backend communicates with the Python FastAPI service and acts as the main API for future web and mobile clients.
+The Node.js and TypeScript service acts as the main backend for the web application.
+
+It communicates with:
+
+* Python FastAPI for physics calculations
+* PostgreSQL for persistent data
 
 ### Gravity Endpoints
 
@@ -171,7 +335,7 @@ The Node.js and TypeScript backend communicates with the Python FastAPI service 
 
 | Method | Endpoint | Purpose |
 | --- | --- | --- |
-| GET | `/api/calculations/history` | Retrieve calculation history |
+| GET | `/api/calculations/history` | Retrieve recent calculation history |
 
 ### Database Health Check
 
@@ -179,20 +343,20 @@ The Node.js and TypeScript backend communicates with the Python FastAPI service 
 | --- | --- |
 | GET | `/api/health/db` |
 
+---
+
 ## PostgreSQL Database
 
-The application currently uses two PostgreSQL tables.
+The application currently uses two primary tables.
 
 ### `celestial_bodies`
 
-Stores celestial body information such as:
+Stores celestial body information including:
 
 * Name
 * Mass
 * Radius
 * Creation time
-
-Example bodies currently used during development include Earth, Moon, and Mars.
 
 ### `calculation_history`
 
@@ -205,11 +369,15 @@ Each record contains:
 * Result data
 * Creation time
 
-The input and result values are stored using PostgreSQL `JSONB`, allowing different physics calculations to store different data structures.
+Input and result values are stored using PostgreSQL `JSONB`.
+
+This allows different physics calculations to store different input and result structures without requiring a separate table for every calculation type.
+
+---
 
 ## Example Calculation
 
-Gravitational force request:
+### Gravitational Force Request
 
 ```json
 {
@@ -219,7 +387,7 @@ Gravitational force request:
 }
 ```
 
-Example response:
+### Example Response
 
 ```json
 {
@@ -228,27 +396,55 @@ Example response:
 }
 ```
 
+The React frontend formats large values into a more readable scientific form such as:
+
+```text
+1.98049 × 10²⁰ N
+```
+
+---
+
 ## Input Validation
 
-FastAPI requests are validated using Pydantic before physics calculations are performed.
+FastAPI requests are validated using Pydantic before calculations are performed.
 
-Values such as mass, radius, distance, and orbital radius must satisfy the requirements of their respective calculations.
+Values such as:
 
-For example, values that must be positive are rejected when they are less than or equal to zero.
+* Mass
+* Radius
+* Distance
+* Height
+* Orbital radius
 
-The Python physics layer also performs its own validation so the calculation functions can safely be reused outside the FastAPI application.
+must satisfy the requirements of their respective calculations.
 
-The PostgreSQL database also contains constraints for stored values such as mass and radius.
+The Python calculation layer also performs validation independently of FastAPI.
 
-## Running the Python Service
+PostgreSQL adds another layer of protection using database constraints for stored values such as mass and radius.
 
-Navigate to the Python service:
+---
+
+## Production Reliability
+
+The production application includes retry logic between services.
+
+This is particularly useful when a hosted service takes time to become available after inactivity.
+
+The frontend can retry requests to the Node.js API, and the Node.js service can retry communication with the Python physics service.
+
+The application also handles unexpected non JSON responses from infrastructure without immediately crashing the calculation flow.
+
+---
+
+## Running the Python Service Locally
+
+Navigate to:
 
 ```bash
 cd python-service
 ```
 
-Install the required packages:
+Install dependencies:
 
 ```bash
 python -m pip install -r requirements.txt
@@ -260,7 +456,7 @@ Start FastAPI:
 python -m uvicorn app.main:app --reload
 ```
 
-The Python API runs at:
+The API runs at:
 
 ```text
 http://127.0.0.1:8000
@@ -272,9 +468,11 @@ FastAPI documentation is available at:
 http://127.0.0.1:8000/docs
 ```
 
-## Running the Node.js Backend
+---
 
-Navigate to the backend:
+## Running the Node.js Backend Locally
+
+Navigate to:
 
 ```bash
 cd backend
@@ -286,13 +484,14 @@ Install dependencies:
 npm install
 ```
 
-Create a `.env` file based on `.env.example`.
+Create a `.env` file using `.env.example`.
 
 Example:
 
 ```env
 DATABASE_URL=postgresql://postgres:YOUR_PASSWORD@127.0.0.1:5432/gravity_calculator
 PYTHON_SERVICE_URL=http://127.0.0.1:8000
+FRONTEND_URL=http://localhost:5173
 PORT=3000
 ```
 
@@ -304,43 +503,119 @@ Start the backend:
 npm run dev
 ```
 
-The Node.js API runs at:
+The backend runs at:
 
 ```text
 http://localhost:3000
 ```
 
-## Current Data Flow
+---
 
-A physics calculation currently follows this flow:
+## Running the React Web Application Locally
+
+Navigate to:
+
+```bash
+cd web
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Create a `.env` file using `.env.example`.
+
+Example:
+
+```env
+VITE_API_URL=http://localhost:3000
+```
+
+Start Vite:
+
+```bash
+npm run dev
+```
+
+The web application runs at:
 
 ```text
-Client Request
-      |
-      v
-Node.js / TypeScript
-      |
-      v
-Python FastAPI
-      |
-      v
-Physics Calculation
-      |
-      v
-Node.js
-      |
-      +------> Return result to client
-      |
-      v
-PostgreSQL
-Calculation History
+http://localhost:5173
 ```
+
+---
+
+## Production Deployment
+
+The application is deployed using Render.
+
+Production consists of separate services for:
+
+```text
+React Static Site
+        |
+Node.js Web Service
+       / \
+      /   \
+PostgreSQL  Python FastAPI
+```
+
+The production website is available at:
+
+**https://gravitykalkilateri2023.com**
+
+The custom domain points to the deployed React application.
+
+Environment variables are used to connect the production frontend, Node.js API, Python API, and PostgreSQL database without committing credentials to Git.
+
+---
+
+## Git Workflow
+
+The project uses two primary branches.
+
+```text
+dev
+ |
+ | development
+ | testing
+ | new features
+ |
+ v
+Pull Request
+ |
+ v
+main
+ |
+ v
+Production deployment
+```
+
+### `dev`
+
+Used for:
+
+* Feature development
+* Bug fixes
+* Testing
+* Experiments
+
+### `main`
+
+Used for:
+
+* Stable code
+* Production deployments
+
+Changes are developed and tested on `dev` before being merged into `main`.
+
+---
 
 ## Testing
 
-The nine Python physics endpoints have been manually tested using FastAPI documentation.
-
-The Node.js proxy endpoints have also been tested directly.
+The project has been manually tested across the complete application stack.
 
 Testing currently includes:
 
@@ -349,12 +624,23 @@ Testing currently includes:
 * Python request validation
 * Node.js to Python communication
 * PostgreSQL connectivity
+* Production PostgreSQL connectivity
 * Celestial body creation and retrieval
-* Retrieval by celestial body ID
+* Celestial body selection in React
+* Dynamic celestial body backgrounds
 * Calculation history storage
 * Calculation history retrieval
+* Scientific number formatting
+* React Router navigation
+* Direct navigation to `/history`
+* Direct navigation to `/planets`
+* Production deployment
+* Custom domain access
+* Production calculations
 
 Automated unit and integration tests are planned for a future stage.
+
+---
 
 ## Development Progress
 
@@ -385,52 +671,80 @@ PostgreSQL integration
 Celestial body storage
         ✓
 
-Calculation history storage
+Calculation history
         ✓
 
-Calculation history API
+React + TypeScript web application
+        ✓
+
+Dynamic planet backgrounds
+        ✓
+
+Scientific number formatting
+        ✓
+
+Navigation and multiple pages
+        ✓
+
+Planet biography section
+        ✓
+
+Production PostgreSQL database
+        ✓
+
+Production Python service
+        ✓
+
+Production Node.js API
+        ✓
+
+Production React application
+        ✓
+
+Custom production domain
         ✓
 ```
 
 Current stage:
 
 ```text
-Web application
-        ↓
-React + TypeScript interface
-```
+Production web application
+        ✓
 
-Future stages:
-
-```text
-Web interface
-        ↓
-Mobile application
-        ↓
-Additional backend features
+Continue improving features
         ↓
 Automated testing
         ↓
-Advanced physics calculations
+Advanced physics
         ↓
-AI powered physics explanations
+AI assisted explanations
+        ↓
+Mobile application
 ```
+
+---
 
 ## Future AI Features
 
-A future version of Gravity Calculator may include an AI assisted learning feature.
+A future version of Gravity Calculator may include an AI assisted learning system.
 
-The AI layer will not replace the Python physics engine. Python will remain responsible for numerical calculations.
+The AI layer will not replace the Python physics engine.
+
+Python will remain responsible for numerical calculations and scientific results.
 
 The AI feature may be used to:
 
 * Explain physics formulas
 * Define physics concepts
 * Explain calculation results
-* Explain the steps used to solve a problem
-* Answer questions about gravitational and orbital physics
+* Explain solution steps
+* Answer questions about gravitational physics
+* Answer questions about orbital physics
+* Provide educational context about celestial bodies
 
-This keeps the numerical calculations deterministic while allowing the application to provide educational explanations.
+This architecture keeps numerical calculations deterministic while allowing AI to provide educational explanations.
+
+---
 
 ## Future Physics Features
 
@@ -446,14 +760,37 @@ Future versions may include:
 * Orbital trajectories
 * Lagrange point calculations
 
-## Planned Frontend Technologies
+---
+
+## Planned Mobile Application
+
+A React Native mobile application is planned.
+
+The mobile application will reuse the same Node.js API, PostgreSQL database, and Python physics service used by the web application.
+
+Possible technologies include:
 
 | Technology | Role |
 | --- | --- |
-| React | Web interface |
-| TypeScript | Web application development |
-| React Native | Mobile application |
-| Expo | Mobile development |
+| React Native | Mobile interface |
+| TypeScript | Mobile development |
+| Expo | Mobile development and testing |
+
+---
+
+## Project Status
+
+**Production**
+
+Gravity Calculator is now deployed and operational as a full stack web application.
+
+**Live application:**
+
+https://gravitykalkilateri2023.com
+
+Further development will continue through the `dev` branch before stable changes are merged into `main`.
+
+---
 
 ## Author
 
