@@ -5,6 +5,9 @@ import { calculations } from "../config/calculations";
 import ScientificNumber from './ScientificNumber';
 // Base URL for the Node.js backend.
 import { API_URL } from "../config/api";
+//Fetch from Node with automatic retry support
+import { apiFetch } from "../utils/apiFetch";
+
 // Define the shape of this data.
 interface GravityCalculatorProps {
     // Define the callback for a completed calculation.
@@ -65,9 +68,9 @@ function GravityCalculator({
             // Try the request.
             try {
                 // Send a request to the backend.
-                const response = await fetch(
+                const response = await apiFetch(
                     // Use this backend address.
-                   `${API_URL}/api/celestial-bodies`
+                   "/api/celestial-bodies"
                 // Finish this expression.
                 );
 
@@ -273,9 +276,9 @@ function GravityCalculator({
         // Try the request.
         try {
             // Send a request to the backend.
-            const response = await fetch(
+            const response = await apiFetch(
                 // Use this backend address.
-                `${API_URL}${config.endpoint}`,
+                config.endpoint,
                 // Finish this expression.
                 {
                     // Send the data with a POST request.
