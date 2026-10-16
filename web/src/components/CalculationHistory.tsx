@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import ScientificNumber from "./ScientificNumber";
 // Base URL for the Node.js backend.
 import { API_URL } from "../config/api";
+import { apiFetch } from "../utils/apiFetch";
 // Define one calculation stored in PostgreSQL
 interface CalculationHistoryItem {
     // Store the calculation ID.
@@ -46,10 +47,9 @@ function CalculationHistory({ refreshKey }: CalculationHistoryProps) {
                 setLoading(true);
 
                 // Send a request to the backend.
-                const response = await fetch(
-                    // Use the calculation history endpoint.
-                    `${API_URL}/api/calculations/history`
-                // Finish this expression.
+                // Automatically retry while the production API wakes up.
+                const response = await apiFetch(
+                    "/api/calculations/history"
                 );
 
                 // Check whether the request failed.
